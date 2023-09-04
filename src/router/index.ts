@@ -1,13 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '@/layout/header-aside-layout/index.vue'
-import HelloWorld from "@/components/HelloWorld.vue";
-
-const routes = [
-  {
-    path: 'home',
-    component: HelloWorld,
-  }
-]
+import HeaderAsideLayout from '@/layout/header-aside-layout/index.vue'
+import routerConfig from "@/config/routerConfig";
 
 declare global {
   interface ImportMeta {
@@ -17,15 +10,16 @@ declare global {
   }
 }
 
+//TODO 待优化
+// @ts-ignore
 const router = createRouter({
-  // @ts-ignore
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
       name: 'home',
-      component: HomeView,
-      children: routes
+      component: HeaderAsideLayout,
+      children: routerConfig
     },
     {
       path: '/about',
