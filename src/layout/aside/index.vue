@@ -7,6 +7,7 @@ export default {
 <script setup lang="tsx">
 import {useRouter, useRoute} from 'vue-router';
 import menuConfig from "@/config/menuConfig";
+import pinia from 'pinia'
 import {useAuthStore} from '@/stores/auth'
 
 const store = useAuthStore();

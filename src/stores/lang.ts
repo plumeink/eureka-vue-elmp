@@ -10,4 +10,6 @@ export const useLangStore = defineStore('lang', () => {
     const langValue = computed(() => (lang.value))
 
     return { lang, langValue, modifyLang }
+},{
+    persist: true,
 })

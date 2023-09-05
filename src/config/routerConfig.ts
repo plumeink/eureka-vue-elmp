@@ -1,7 +1,7 @@
 
 import C from './constants';
 
-const Login = () => import('../views/AboutView.vue');
+const Login = () => import('../views/HomeView.vue');
 
 const routerConfig = [
     {
