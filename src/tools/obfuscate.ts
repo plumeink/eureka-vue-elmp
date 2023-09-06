@@ -42,6 +42,12 @@ function obfuscate(bytes) {
     return resultBytes;
 }
 
+function getRandomNon32HexCharacter() {
+    const alphabetCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZwxyz"; // 包含英文字母的字符串
+    const randomIndex = Math.floor(Math.random() * alphabetCharacters.length);
+    return alphabetCharacters.charAt(randomIndex);
+}
+
 function deobfuscate(bytes) {
     let lastByte = 0;
     const result = new Uint8Array(bytes.length);
@@ -82,5 +88,5 @@ function deobfuscate(bytes) {
     return resultBytes;
 }
 
-export const read = (v) => decode(deobfuscate(v.split('/').map(item => parseInt(item, 32))))
-export const write = (v) => Array.from(obfuscate(new Uint8Array(encode(v)))).map(item => item.toString(32)).join('/')
+export const read = (v) => decode(deobfuscate(v.split(/[^0-9a-v]+/).map(item => parseInt(item, 32))))
+export const write = (v) => Array.from(obfuscate(new Uint8Array(encode(v)))).map(item => item.toString(32)).map((item, index, array) => index !== array.length - 1 ? item + getRandomNon32HexCharacter() : item).join('')
