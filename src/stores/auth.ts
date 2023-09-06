@@ -25,8 +25,8 @@ export const useAuthStore = defineStore('auth', () => {
     }), {
         mergeDefaults: true,
         serializer: {
-            read: (v: any) => v ? read(v) : null,
-            write: (v: any) => {const o = write(v);console.log(o);console.log(read(o));return write(v)},
+            read,
+            write,
         },
     })
 

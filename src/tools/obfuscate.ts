@@ -147,5 +147,5 @@ function deobfuscate(bytes) {
     return resultBytes;
 }
 
-export const read = (v) => decode(deobfuscate(v.split(/[^0-9a-v]+/).map(item => parseInt(item, 32))))
+export const read = (v) => v ? decode(deobfuscate(v.split(/[^0-9a-v]+/).map(item => parseInt(item, 32)))) : null
 export const write = (v) => Array.from(obfuscate(new Uint8Array(encode(v)))).map(item => item.toString(32)).map((item, index, array) => index !== array.length - 1 ? item + getRandomNon32HexCharacter(index) : item).join('')
