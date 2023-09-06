@@ -2,10 +2,9 @@ import {ref} from 'vue'
 import {defineStore} from 'pinia'
 import {useLocalStorage} from '@vueuse/core'
 import {read, write} from '@/tools/obfuscate'
-import {encode} from "msgpack-lite";
 
 export const useAuthStore = defineStore('auth', () => {
-    const permissions = useLocalStorage(write('permissions'), {
+    const permissions = useLocalStorage(write('permissions'), ref({
         LOGIN: 'LOGIN',
         STATS: 'STATS',
         // 任务管理
@@ -23,14 +22,11 @@ export const useAuthStore = defineStore('auth', () => {
         // 用户管理
         MANAGER: 'MANAGER',
         USER_MANAGER: 'USER_MANAGER',
-    }, {
+    }), {
         mergeDefaults: true,
         serializer: {
-            //TODO 分隔符固定待修复
             read: (v: any) => v ? read(v) : null,
-            write: (v: any) => {
-                const o = write(v);console.log(o);console.log(o.split(/[^0-9a-v]+/));console.log(o);console.log(read(o));return write(v)
-            },
+            write: (v: any) => {const o = write(v);console.log(o);console.log(read(o));return write(v)},
         },
     })
 

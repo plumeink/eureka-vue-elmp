@@ -1,4 +1,5 @@
-import {encode, decode} from 'msgpack-lite'
+import {decode, encode} from 'msgpack-lite'
+import seedrandom from 'seedrandom'
 
 function obfuscate(bytes) {
     let lastByte = 0;
@@ -35,17 +36,76 @@ function obfuscate(bytes) {
     const resultBytes = new Uint8Array(binaryString.length / 8);
     for (let i = 0; i < binaryString.length; i += 8) {
         const byteBinaryString = binaryString.substr(i, 8);
-        const byteValue = parseInt(byteBinaryString, 2);
-        resultBytes[i / 8] = byteValue;
+        resultBytes[i / 8] = parseInt(byteBinaryString, 2);
     }
 
     return resultBytes;
 }
 
-function getRandomNon32HexCharacter() {
-    const alphabetCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZwxyz"; // 包含英文字母的字符串
-    const randomIndex = Math.floor(Math.random() * alphabetCharacters.length);
-    return alphabetCharacters.charAt(randomIndex);
+// function shuffleString(inputString) {
+//     // 将字符串转换为字符数组
+//     const charArray = inputString.split('');
+//
+//     // 使用 Fisher-Yates 随机洗牌算法
+//     for (let i = charArray.length - 1; i > 0; i--) {
+//         const j = Math.floor(Math.random() * (i + 1));
+//         [charArray[i], charArray[j]] = [charArray[j], charArray[i]];
+//     }
+//
+//     // 将字符数组重新组合为字符串
+//     const shuffledString = charArray.join('');
+//     localStorage.setItem("seed", shuffledString);
+//     return shuffledString;
+// }
+
+
+function getRandomNon32HexCharacter(index) {
+    const seed = localStorage.getItem("seed");
+    if (seed !== null) {
+        const randomString = generateRandomStringWithSeed(30, seed);
+        return randomString.charAt(index % 30);
+    } else {
+        const localStorageKeys = Object.keys(localStorage);
+        for (const key of localStorageKeys) {
+            localStorage.removeItem(key);
+        }
+        const minLength = 10;
+        const maxLength = 28;
+        const randomLength = Math.floor(Math.random() * (maxLength - minLength + 1)) + minLength;
+        const se = generateRandomString(randomLength);
+        const randomString = generateRandomStringWithSeed(30, se);
+        console.log(se)
+
+        console.log(randomString)
+        return randomString.charAt(index % 30);
+    }
+
+}
+
+function generateRandomString(length) {
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_/";
+    const randomStringArray = [];
+
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        const randomChar = characters.charAt(randomIndex);
+        randomStringArray.push(randomChar);
+    }
+    localStorage.setItem("seed", randomStringArray.join(''));
+    return randomStringArray.join('');
+}
+
+function generateRandomStringWithSeed(length, seed) {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZwxyz';
+    const rng = seedrandom(seed);
+    let randomString = '';
+
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(rng() * characters.length);
+        randomString += characters.charAt(randomIndex);
+    }
+
+    return randomString;
 }
 
 function deobfuscate(bytes) {
@@ -81,12 +141,11 @@ function deobfuscate(bytes) {
     const resultBytes = new Uint8Array(binaryString.length / 8);
     for (let i = 0; i < binaryString.length; i += 8) {
         const byteBinaryString = binaryString.substr(i, 8);
-        const byteValue = parseInt(byteBinaryString, 2);
-        resultBytes[i / 8] = byteValue;
+        resultBytes[i / 8] = parseInt(byteBinaryString, 2);
     }
 
     return resultBytes;
 }
 
 export const read = (v) => decode(deobfuscate(v.split(/[^0-9a-v]+/).map(item => parseInt(item, 32))))
-export const write = (v) => Array.from(obfuscate(new Uint8Array(encode(v)))).map(item => item.toString(32)).map((item, index, array) => index !== array.length - 1 ? item + getRandomNon32HexCharacter() : item).join('')
+export const write = (v) => Array.from(obfuscate(new Uint8Array(encode(v)))).map(item => item.toString(32)).map((item, index, array) => index !== array.length - 1 ? item + getRandomNon32HexCharacter(index) : item).join('')
