@@ -13,10 +13,8 @@ function obfuscate(bytes) {
         result[i] = curByte;
     }
 
-    // 反转数组
     result.reverse();
 
-    // 再次执行混淆操作
     lastByte = 0;
     for (let i = 0; i < result.length; i++) {
         let curByte = result[i];
@@ -26,13 +24,11 @@ function obfuscate(bytes) {
         result[i] = curByte;
     }
 
-    // 转换为二进制字符串，确保每个字节有 8 位
     const binaryString = result.reduce((acc, curByte) => {
         const byteBinaryString = curByte.toString(2).padStart(8, '0');
         return acc + byteBinaryString;
     }, '');
 
-    // 将二进制字符串转换回 Uint8Array
     const resultBytes = new Uint8Array(binaryString.length / 8);
     for (let i = 0; i < binaryString.length; i += 8) {
         const byteBinaryString = binaryString.substr(i, 8);
@@ -41,23 +37,6 @@ function obfuscate(bytes) {
 
     return resultBytes;
 }
-
-// function shuffleString(inputString) {
-//     // 将字符串转换为字符数组
-//     const charArray = inputString.split('');
-//
-//     // 使用 Fisher-Yates 随机洗牌算法
-//     for (let i = charArray.length - 1; i > 0; i--) {
-//         const j = Math.floor(Math.random() * (i + 1));
-//         [charArray[i], charArray[j]] = [charArray[j], charArray[i]];
-//     }
-//
-//     // 将字符数组重新组合为字符串
-//     const shuffledString = charArray.join('');
-//     localStorage.setItem("seed", shuffledString);
-//     return shuffledString;
-// }
-
 
 function getRandomNon32HexCharacter(index) {
     const seed = localStorage.getItem("seed");
@@ -119,10 +98,8 @@ function deobfuscate(bytes) {
         result[i] = curByte;
     }
 
-    // 反转数组
     result.reverse();
 
-    // 再次执行反混淆操作
     lastByte = 0;
     for (let i = 0; i < result.length; i++) {
         let curByte = result[i];
@@ -131,13 +108,11 @@ function deobfuscate(bytes) {
         result[i] = curByte;
     }
 
-    // 转换为二进制字符串，确保每个字节有 8 位
     const binaryString = result.reduce((acc, curByte) => {
         const byteBinaryString = curByte.toString(2).padStart(8, '0');
         return acc + byteBinaryString;
     }, '');
 
-    // 将二进制字符串转换回 Uint8Array
     const resultBytes = new Uint8Array(binaryString.length / 8);
     for (let i = 0; i < binaryString.length; i += 8) {
         const byteBinaryString = binaryString.substr(i, 8);
