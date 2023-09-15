@@ -1,10 +1,11 @@
 import {ref} from 'vue'
 import {defineStore} from 'pinia'
-import {useLocalStorage} from '@vueuse/core'
+import {useLocalStorage, throttleFilter} from '@vueuse/core'
 import {read, write} from '@/tools/obfuscate'
 
 export const useAuthStore = defineStore('auth', () => {
-    const permissions = useLocalStorage(write('permissions'), ref({
+    const localStorageName = write('permissions')
+    const permissions = useLocalStorage(localStorageName, ref({
         LOGIN: 'LOGIN',
         STATS: 'STATS',
         // 任务管理
@@ -28,6 +29,8 @@ export const useAuthStore = defineStore('auth', () => {
             read,
             write,
         },
+        // VueUse节流
+        eventFilter: throttleFilter(1000),
     })
 
     return {permissions}
